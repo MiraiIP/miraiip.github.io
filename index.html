@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Добавление VPN-подписки</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      padding: 24px;
+      text-align: center;
+    }
+    a {
+      word-break: break-all;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<h3>Добавление VPN-подписки…</h3>
+
+<p id="fallback-text" style="display:none;">
+  Если приложение не открылось автоматически, нажмите ссылку ниже:
+</p>
+
+<p>
+  <a id="fallback-link" href="#" style="display:none;">
+    Добавить подписку
+  </a>
+</p>
+
+<p id="store-link" style="display:none;">
+  <a id="store-url" href="#">Установить приложение</a>
+</p>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const app = params.get("app");
+  const key = params.get("key");
+
+  if (!app || !key) {
+    document.body.innerHTML =
+      "<h3>Ошибка: неверная ссылка</h3><p>Вернитесь в бота и попробуйте снова.</p>";
+    throw new Error("Missing params");
+  }
+
+  const subUrl =
+    "https://pr01.crol-dark.tech/sub/" + key;
+
+  // 🔐 Happ routing config (base64)
+  const happRouting =
+    "ewogICAgIk5hbWUiOiAi8J+QsENST0wgVlBOIENvbmZpZyIsCiAgICAiR2xvYmFsUHJveHkiOiAidHJ1ZSIsCiAgICAiVXNlQ2h1bmtGaWxlcyI6ICJ0cnVlIiwKICAgICJSZW1vdGVETlNUeXBlIjogIkRvSCIsCiAgICAiUmVtb3RlRE5TRG9tYWluIjogImh0dHBzOi8vZG5zLmFkZ3VhcmQtZG5zLmNvbS9kbnMtcXVlcnkiLAogICAgIlJlbW90ZUROU0lQIjogIjk0LjE0MC4xNC4xNCIsCiAgICAiRG9tZXN0aWNETlNUeXBlIjogIkRvSCIsCiAgICAiRG9tZXN0aWNETlNEb21haW4iOiAiaHR0cHM6Ly9kbnMuYWRndWFyZC1kbnMuY29tL2Rucy1xdWVyeSIsCiAgICAiRG9tZXN0aWNETlNJUCI6ICI5NC4xNDAuMTUuMTUiLAogICAgIkdlb2lwdXJsIjogImh0dHBzOi8vZ2l0aHViLmNvbS9mcmF5WlYvc2ltcGxlLXJ1LWdlb2lwL3JlbGVhc2VzL2xhdGVzdC9kb3dubG9hZC9nZW9pcC5kYXQiLAogICAgIkdlb3NpdGV1cmwiOiAiaHR0cHM6Ly9naXRodWIuY29tL2ZyYXlaVi9zaW1wbGUtcnUtZ2Vvc2l0ZS9yZWxlYXNlcy9sYXRlc3QvZG93bmxvYWQvZ2Vvc2l0ZS5kYXQiLAogICAgIkxhc3RVcGRhdGVkIjogIiIsCiAgICAiRG5zSG9zdHMiOiB7fSwKICAgICJSb3V0ZU9yZGVyIjogImJsb2NrLXByb3h5LWRpcmVjdCIsCiAgICAiRGlyZWN0U2l0ZXMiOiBbXSwKICAgICJEaXJlY3RJcCI6IFtdLAogICAgIlByb3h5U2l0ZXMiOiBbXSwKICAgICJQcm94eUlwIjogW10sCiAgICAiQmxvY2tTaXRlcyI6IFtdLAogICAgIkJsb2NrSXAiOiBbXSwKICAgICJEb21haW5TdHJhdGVneSI6ICJJUElmTm9uTWF0Y2giLAogICAgIkZha2VETlMiOiAiZmFsc2UiCn0=";
+
+  let deepLink = null;
+  let storeLink = null;
+
+  switch (app) {
+    case "happ":
+      deepLink = "happ://routing/add/" + happRouting;
+      setTimeout(() => {
+        location.href = "happ://add/" + encodeURIComponent(subUrl);
+      }, 800);
+      storeLink = /iphone|ipad/i.test(navigator.userAgent)
+        ? "https://apps.apple.com/app/id6444312432"
+        : "https://play.google.com/store/apps/details?id=app.hiddify.com";
+      break;
+
+    case "hiddify":
+      deepLink =
+        "hiddify://import/sub?url=" + encodeURIComponent(subUrl);
+      storeLink =
+        "https://apps.apple.com/app/id6444077591";
+      break;
+
+    case "singbox":
+      deepLink =
+        "sing-box://import-remote-profile?url=" +
+        encodeURIComponent(subUrl);
+      storeLink =
+        "https://apps.apple.com/app/id6451272673";
+      break;
+
+    case "streisand":
+      deepLink =
+        "streisand://import?url=" + encodeURIComponent(subUrl);
+      storeLink =
+        "https://apps.apple.com/app/id6450534064";
+      break;
+
+    case "v2raytun":
+      deepLink =
+        "v2raytun://import/sub?url=" + encodeURIComponent(subUrl);
+      storeLink =
+        "https://play.google.com/store/apps/details?id=com.v2raytun.android";
+      break;
+
+    case "v2box":
+      deepLink =
+        "v2box://add-profile?url=" + encodeURIComponent(subUrl);
+      storeLink =
+        "https://apps.apple.com/app/id6446819692";
+      break;
+
+    default:
+      document.body.innerHTML = "<h3>Ошибка: неизвестное приложение</h3>";
+      throw new Error("Unknown app");
+  }
+
+  // fallback
+  const fallbackText = document.getElementById("fallback-text");
+  const fallbackLink = document.getElementById("fallback-link");
+  const storeBlock = document.getElementById("store-link");
+  const storeUrl = document.getElementById("store-url");
+
+  fallbackLink.href = deepLink;
+  fallbackText.style.display = "block";
+  fallbackLink.style.display = "inline";
+
+  if (storeLink) {
+    storeUrl.href = storeLink;
+    storeBlock.style.display = "block";
+  }
+
+  // auto redirect
+  setTimeout(() => {
+    location.href = deepLink;
+  }, 500);
+</script>
+
+</body>
+</html>
