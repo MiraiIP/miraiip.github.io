@@ -39,19 +39,19 @@ if (!app || !key) {
 
 const subUrl = "https://pr01.crol-dark.tech/sub/" + key;
 
+// Routing конфигурация только для Happ
+const happRouting = "happ://routing/add/ewogICAgIk5hbWUiOiAi8J+QsENST0wgVlBOIENvbmZpZyIsCiAgICAiR2xvYmFsUHJveHkiOiAidHJ1ZSIsCiAgICAiVXNlQ2h1bmtGaWxlcyI6ICJ0cnVlIiwKICAgICJSZW1vdGVETlNUeXBlIjogIkRvSCIsCiAgICAiUmVtb3RlRE5TRG9tYWluIjogImh0dHBzOi8vZG5zLmFkZ3VhcmQtZG5zLmNvbS9kbnMtcXVlcnkiLAogICAgIlJlbW90ZUROU0lQIjogIjk0LjE0MC4xNC4xNCIsCiAgICAiRG9tZXN0aWNETlNUeXBlIjogIkRvSCIsCiAgICAiRG9tZXN0aWNETlNEb21haW4iOiAiaHR0cHM6Ly9kbnMuYWRndWFyZC1kbnMuY29tL2Rucy1xdWVyeSIsCiAgICAiRG9tZXN0aWNETlNJUCI6ICI5NC4xNDAuMTUuMTUiLAogICAgIkdlb2lwdXJsIjogImh0dHBzOi8vZ2l0aHViLmNvbS9mcmF5WlYvc2ltcGxlLXJ1LWdlb2lwL3JlbGVhc2VzL2xhdGVzdC9kb3dubG9hZC9nZW9pcC5kYXQiLAogICAgIkdlb3NpdGV1cmwiOiAiaHR0cHM6Ly9naXRodWIuY29tL2ZyYXlaVi9zaW1wbGUtcnUtZ2Vvc2l0ZS9yZWxlYXNlcy9sYXRlc3QvZG93bmxvYWQvZ2Vvc2l0ZS5kYXQiLAogICAgIkxhc3RVcGRhdGVkIjogIiIsCiAgICAiRG5zSG9zdHMiOiB7fSwKICAgICJSb3V0ZU9yZGVyIjogImJsb2NrLXByb3h5LWRpcmVjdCIsCiAgICAiRGlyZWN0U2l0ZXMiOiBbXSwKICAgICJEaXJlY3RJcCI6IFtdLAogICAgIlByb3h5U2l0ZXMiOiBbXSwKICAgICJQcm94eUlwIjogW10sCiAgICAiQmxvY2tTaXRlcyI6IFtdLAogICAgIkJsb2NrSXAiOiBbXSwKICAgICJEb21haW5TdHJhdGVneSI6ICJJUElmTm9uTWF0Y2giLAogICAgIkZha2VETlMiOiAiZmFsc2UiCn0=";
+
 let deepLink = null;
 let storeLink = null;
-
-// routing конфигурация только для Happ
-const happRouting = "happ://routing/add/ewogICAgIk5hbWUiOiAi8J+QsENST0wgVlBOIENvbmZpZyIsCiAgICAiR2xvYmFsUHJveHkiOiAidHJ1ZSIsCiAgICAiVXNlQ2h1bmtGaWxlcyI6ICJ0cnVlIiwKICAgICJSZW1vdGVETlNUeXBlIjogIkRvSCIsCiAgICAiUmVtb3RlRE5TRG9tYWluIjogImh0dHBzOi8vZG5zLmFkZ3VhcmQtZG5zLmNvbS9kbnMtcXVlcnkiLAogICAgIlJlbW90ZUROU0lQIjogIjk0LjE0MC4xNC4xNCIsCiAgICAiRG9tZXN0aWNETlNUeXBlIjogIkRvSCIsCiAgICAiRG9tZXN0aWNETlNEb21haW4iOiAiaHR0cHM6Ly9kbnMuYWRndWFyZC1kbnMuY29tL2Rucy1xdWVyeSIsCiAgICAiRG9tZXN0aWNETlNJUCI6ICI5NC4xNDAuMTUuMTUiLAogICAgIkdlb2lwdXJsIjogImh0dHBzOi8vZ2l0aHViLmNvbS9mcmF5WlYvc2ltcGxlLXJ1LWdlb2lwL3JlbGVhc2VzL2xhdGVzdC9kb3dubG9hZC9nZW9pcC5kYXQiLAogICAgIkdlb3NpdGV1cmwiOiAiaHR0cHM6Ly9naXRodWIuY29tL2ZyYXlaVi9zaW1wbGUtcnUtZ2Vvc2l0ZS9yZWxlYXNlcy9sYXRlc3QvZG93bmxvYWQvZ2Vvc2l0ZS5kYXQiLAogICAgIkxhc3RVcGRhdGVkIjogIiIsCiAgICAiRG5zSG9zdHMiOiB7fSwKICAgICJSb3V0ZU9yZGVyIjogImJsb2NrLXByb3h5LWRpcmVjdCIsCiAgICAiRGlyZWN0U2l0ZXMiOiBbXSwKICAgICJEaXJlY3RJcCI6IFtdLAogICAgIlByb3h5U2l0ZXMiOiBbXSwKICAgICJQcm94eUlwIjogW10sCiAgICAiQmxvY2tTaXRlcyI6IFtdLAogICAgIkJsb2NrSXAiOiBbXSwKICAgICJEb21haW5TdHJhdGVneSI6ICJJUElmTm9uTWF0Y2giLAogICAgIkZha2VETlMiOiAiZmFsc2UiCn0=";
 
 switch(app){
   case "happ":
     // routing
     deepLink = happRouting;
-    // через небольшой таймаут импортируем подписку
+    // через таймаут добавляем подписку в install-sub формате
     setTimeout(()=>{
-      window.location.href = "happ://add/" + encodeURIComponent(subUrl);
+      window.location.href = "happ://install-sub/?url=" + encodeURIComponent(subUrl);
     }, 800);
     storeLink = /iphone|ipad/i.test(navigator.userAgent)
       ? "https://apps.apple.com/app/id6444312432"
@@ -59,7 +59,7 @@ switch(app){
     break;
 
   case "hiddify":
-    deepLink = "hiddify://import/sub?url=" + encodeURIComponent(subUrl);
+    deepLink = "hiddify://install-sub/?url=" + encodeURIComponent(subUrl);
     storeLink = /iphone|ipad/i.test(navigator.userAgent)
       ? "https://apps.apple.com/app/id6444077591"
       : "https://play.google.com/store/apps/details?id=app.hiddify.com";
@@ -96,7 +96,7 @@ switch(app){
     throw new Error("Unknown app");
 }
 
-// fallback UI — всегда чистый HTTPS подписки
+// fallback — всегда чистый HTTPS
 const fallbackText = document.getElementById("fallback-text");
 const fallbackLink = document.getElementById("fallback-link");
 fallbackLink.href = subUrl;
@@ -113,6 +113,7 @@ if(storeLink){
 
 // автопереход
 setTimeout(()=>{ window.location.href = deepLink; }, 500);
+
 </script>
 
 </body>
