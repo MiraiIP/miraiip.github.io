@@ -45,61 +45,55 @@
     throw new Error("Missing params");
   }
 
-  const subUrl =
-    "https://pr01.crol-dark.tech/sub/" + key;
-
-  // 🔐 Happ routing config (base64)
-  const happRouting =
-    "ewogICAgIk5hbWUiOiAi8J+QsENST0wgVlBOIENvbmZpZyIsCiAgICAiR2xvYmFsUHJveHkiOiAidHJ1ZSIsCiAgICAiVXNlQ2h1bmtGaWxlcyI6ICJ0cnVlIiwKICAgICJSZW1vdGVETlNUeXBlIjogIkRvSCIsCiAgICAiUmVtb3RlRE5TRG9tYWluIjogImh0dHBzOi8vZG5zLmFkZ3VhcmQtZG5zLmNvbS9kbnMtcXVlcnkiLAogICAgIlJlbW90ZUROU0lQIjogIjk0LjE0MC4xNC4xNCIsCiAgICAiRG9tZXN0aWNETlNUeXBlIjogIkRvSCIsCiAgICAiRG9tZXN0aWNETlNEb21haW4iOiAiaHR0cHM6Ly9kbnMuYWRndWFyZC1kbnMuY29tL2Rucy1xdWVyeSIsCiAgICAiRG9tZXN0aWNETlNJUCI6ICI5NC4xNDAuMTUuMTUiLAogICAgIkdlb2lwdXJsIjogImh0dHBzOi8vZ2l0aHViLmNvbS9mcmF5WlYvc2ltcGxlLXJ1LWdlb2lwL3JlbGVhc2VzL2xhdGVzdC9kb3dubG9hZC9nZW9pcC5kYXQiLAogICAgIkdlb3NpdGV1cmwiOiAiaHR0cHM6Ly9naXRodWIuY29tL2ZyYXlaVi9zaW1wbGUtcnUtZ2Vvc2l0ZS9yZWxlYXNlcy9sYXRlc3QvZG93bmxvYWQvZ2Vvc2l0ZS5kYXQiLAogICAgIkxhc3RVcGRhdGVkIjogIiIsCiAgICAiRG5zSG9zdHMiOiB7fSwKICAgICJSb3V0ZU9yZGVyIjogImJsb2NrLXByb3h5LWRpcmVjdCIsCiAgICAiRGlyZWN0U2l0ZXMiOiBbXSwKICAgICJEaXJlY3RJcCI6IFtdLAogICAgIlByb3h5U2l0ZXMiOiBbXSwKICAgICJQcm94eUlwIjogW10sCiAgICAiQmxvY2tTaXRlcyI6IFtdLAogICAgIkJsb2NrSXAiOiBbXSwKICAgICJEb21haW5TdHJhdGVneSI6ICJJUElmTm9uTWF0Y2giLAogICAgIkZha2VETlMiOiAiZmFsc2UiCn0=";
+  // 🔐 URL подписки Marzban
+  const subUrl = "https://pr01.crol-dark.tech/sub/" + key;
 
   let deepLink = null;
   let storeLink = null;
 
-  switch (app) {
+  // routing конфигурация для Happ
+  const happRouting = "ewogICAgIkJsb2NrSXAiOiBbCiAgICBdLAogICAgIkJsb2NrU2l0ZXMiOiBbCiAgICBdLAogICAgIkRpcmVjdElwIjogWwogICAgXSwKICAgICJEaXJlY3RTaXRlcyI6IFsKICAgIF0sCiAgICAiRG5zSG9zdHMiOiB7CiAgICAgICAgImRucy5hZGd1YXJkLWRucy5jb20iOiAiOTQuMTQwLjE0LjE0IgogICAgfSwKICAgICJEb21haW5TdHJhdGVneSI6ICJJUElmTm9uTWF0Y2giLAogICAgIkRvbWVzdGljRE5TRG9tYWluIjogImh0dHBzOi8vZG5zLmFkZ3VhcmQtZG5zLmNvbS9kbnMtcXVlcnkiLAogICAgIkRvbWVzdGljRE5TSVAiOiAiOTQuMTQwLjE1LjE1IiwKICAgICJEb21lc3RpY0ROU1R5cGUiOiAiRG9IIiwKICAgICJGYWtlRE5TIjogImZhbHNlIiwKICAgICJHZW9pcHVybCI6ICJodHRwczovL2dpdGh1Yi5jb20vZnJheVpWL3NpbXBsZS1ydS1nZW9pcC9yZWxlYXNlcy9sYXRlc3QvZG93bmxvYWQvZ2VvaXAuZGF0IiwKICAgICJHZW9zaXRldXJsIjogImh0dHBzOi8vZ2l0aHViLmNvbS9mcmF5WlYvc2ltcGxlLXJ1LWdlb3NpdGUvcmVsZWFzZXMvbGF0ZXN0L2Rvd25sb2FkL2dlb3NpdGUuZGF0IiwKICAgICJHbG9iYWxQcm94eSI6ICJ0cnVlIiwKICAgICJMYXN0VXBkYXRlZCI6ICIxNzY3MzgyOTQyIiwKICAgICJOYW1lIjogIlJheSBWUE4gTWFpbiIsCiAgICAiUHJveHlJcCI6IFsKICAgIF0sCiAgICAiUHJveHlTaXRlcyI6IFsKICAgIF0sCiAgICAiUmVtb3RlRE5TRG9tYWluIjogImh0dHBzOi8vZG5zLmFkZ3VhcmQtZG5zLmNvbS9kbnMtcXVlcnkiLAogICAgIlJlbW90ZUROU0lQIjogIjk0LjE0MC4xNC4xNCIsCiAgICAiUmVtb3RlRE5TVHlwZSI6ICJEb0giCn0=";
+
+  switch(app) {
     case "happ":
+      // сначала routing
       deepLink = "happ://routing/add/" + happRouting;
+      // потом подписка через небольшой таймаут
       setTimeout(() => {
         location.href = "happ://add/" + encodeURIComponent(subUrl);
       }, 800);
+      // ссылка в Store
       storeLink = /iphone|ipad/i.test(navigator.userAgent)
         ? "https://apps.apple.com/app/id6444312432"
         : "https://play.google.com/store/apps/details?id=app.hiddify.com";
       break;
 
     case "hiddify":
-      deepLink =
-        "hiddify://import/sub?url=" + encodeURIComponent(subUrl);
+      deepLink = subUrl; // чистый HTTPS
       storeLink =
-        "https://apps.apple.com/app/id6444077591";
+        /iphone|ipad/i.test(navigator.userAgent)
+        ? "https://apps.apple.com/app/id6444077591"
+        : "https://play.google.com/store/apps/details?id=app.hiddify.com";
       break;
 
     case "singbox":
-      deepLink =
-        "sing-box://import-remote-profile?url=" +
-        encodeURIComponent(subUrl);
-      storeLink =
-        "https://apps.apple.com/app/id6451272673";
+      deepLink = "sing-box://import-remote-profile?url=" + encodeURIComponent(subUrl);
+      storeLink = "https://apps.apple.com/app/id6451272673";
       break;
 
     case "streisand":
-      deepLink =
-        "streisand://import?url=" + encodeURIComponent(subUrl);
-      storeLink =
-        "https://apps.apple.com/app/id6450534064";
+      deepLink = "streisand://import?url=" + encodeURIComponent(subUrl);
+      storeLink = "https://apps.apple.com/app/id6450534064";
       break;
 
     case "v2raytun":
-      deepLink =
-        "v2raytun://import/sub?url=" + encodeURIComponent(subUrl);
-      storeLink =
-        "https://play.google.com/store/apps/details?id=com.v2raytun.android";
+      deepLink = "v2raytun://import/sub?url=" + encodeURIComponent(subUrl);
+      storeLink = "https://play.google.com/store/apps/details?id=com.v2raytun.android";
       break;
 
     case "v2box":
-      deepLink =
-        "v2box://add-profile?url=" + encodeURIComponent(subUrl);
-      storeLink =
-        "https://apps.apple.com/app/id6446819692";
+      deepLink = "v2box://add-profile?url=" + encodeURIComponent(subUrl);
+      storeLink = "https://apps.apple.com/app/id6446819692";
       break;
 
     default:
@@ -107,25 +101,26 @@
       throw new Error("Unknown app");
   }
 
-  // fallback
+  // fallback UI — ВСЕГДА чистый HTTPS
   const fallbackText = document.getElementById("fallback-text");
   const fallbackLink = document.getElementById("fallback-link");
-  const storeBlock = document.getElementById("store-link");
-  const storeUrl = document.getElementById("store-url");
-
-  fallbackLink.href = deepLink;
+  fallbackLink.href = subUrl;
   fallbackText.style.display = "block";
   fallbackLink.style.display = "inline";
 
-  if (storeLink) {
+  // Store ссылка
+  if(storeLink) {
+    const storeBlock = document.getElementById("store-link");
+    const storeUrl = document.getElementById("store-url");
     storeUrl.href = storeLink;
     storeBlock.style.display = "block";
   }
 
-  // auto redirect
+  // автопереход
   setTimeout(() => {
-    location.href = deepLink;
+    window.location.href = deepLink;
   }, 500);
+
 </script>
 
 </body>
