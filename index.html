@@ -235,7 +235,9 @@ let storeLink = null;
 switch(app){
   case "happ":
     // Для Happ: сначала маршрутизация, затем подписка
-    routingLink = "happ://routing/add/" + routingConfig;
+    // Используем onadd, чтобы Happ применил маршрутизацию после добавления конфигурации/подписки
+    // И дополнительно делаем payload URL-safe, т.к. base64 может содержать символы вроде + / =
+    routingLink = "happ://routing/onadd/" + encodeURIComponent(routingConfig);
     deepLink = "happ://add/" + subUrl;
     storeLink = /iphone|ipad/i.test(navigator.userAgent)
       ? "https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973"
@@ -301,7 +303,7 @@ addConfigBtn.addEventListener("click", function() {
       window.location.href = routingLink;
       setTimeout(() => {
         window.location.href = deepLink;
-      }, 500);
+      }, 250);
     } else {
       window.location.href = deepLink;
     }
@@ -341,7 +343,7 @@ setTimeout(() => {
           document.getElementById("fallback-text").style.display = "block";
           document.getElementById("fallback-link").style.display = "inline";
         }, 1000);
-      }, 500);
+      }, 250);
     } else {
       window.location.href = deepLink;
       // Если переход не произошел через 1 секунду, показываем кнопку
