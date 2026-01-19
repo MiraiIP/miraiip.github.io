@@ -225,19 +225,12 @@ if (!app || !key) {
 
 const subUrl = "https://pr01.crol-dark.tech/sub/" + key;
 
-// Конфигурация маршрутизации для Happ (base64)
-const routingConfig = "ewogICAgIk5hbWUiOiAi8J+QsENST0wgVlBOIENvbmZpZyIsCiAgICAiR2xvYmFsUHJveHkiOiAidHJ1ZSIsCiAgICAiVXNlQ2h1bmtGaWxlcyI6ICJ0cnVlIiwKICAgICJSZW1vdGVETlNUeXBlIjogIkRvSCIsCiAgICAiUmVtb3RlRE5TRG9tYWluIjogImh0dHBzOi8vZG5zLmFkZ3VhcmQtZG5zLmNvbS9kbnMtcXVlcnkiLAogICAgIlJlbW90ZUROU0lQIjogIjk0LjE0MC4xNC4xNCIsCiAgICAiRG9tZXN0aWNETlNUeXBlIjogIkRvSCIsCiAgICAiRG9tZXN0aWNETlNEb21haW4iOiAiaHR0cHM6Ly9kbnMuYWRndWFyZC1kbnMuY29tL2Rucy1xdWVyeSIsCiAgICAiRG9tZXN0aWNETlNJUCI6ICI5NC4xNDAuMTUuMTUiLAogICAgIkdlb2lwdXJsIjogImh0dHBzOi8vZ2l0aHViLmNvbS9mcmF5WlYvc2ltcGxlLXJ1LWdlb2lwL3JlbGVhc2VzL2xhdGVzdC9kb3dubG9hZC9nZW9pcC5kYXQiLAogICAgIkdlb3NpdGV1cmwiOiAiaHR0cHM6Ly9naXRodWIuY29tL2ZyYXlaVi9zaW1wbGUtcnUtZ2Vvc2l0ZS9yZWxlYXNlcy9sYXRlc3QvZG93bmxvYWQvZ2Vvc2l0ZS5kYXQiLAogICAgIkxhc3RVcGRhdGVkIjogIiIsCiAgICAiRG5zSG9zdHMiOiB7fSwKICAgICJSb3V0ZU9yZGVyIjogImJsb2NrLXByb3h5LWRpcmVjdCIsCiAgICAiRGlyZWN0U2l0ZXMiOiBbXSwKICAgICJEaXJlY3RJcCI6IFtdLAogICAgIlByb3h5U2l0ZXMiOiBbXSwKICAgICJQcm94eUlwIjogW10sCiAgICAiQmxvY2tTaXRlcyI6IFtdLAogICAgIkJsb2NrSXAiOiBbXSwKICAgICJEb21haW5TdHJhdGVneSI6ICJJUElmTm9uTWF0Y2giLAogICAgIkZha2VETlMiOiAiZmFsc2UiCn0=";
-
-// Запуск кастомной схемы без выгрузки страницы.
-// Это важно для Happ: если сделать window.location.href = happ://...,
-// браузер часто "замораживает" JS после открытия приложения, и второй deeplink не успевает сработать.
+// Запуск кастомной схемы без выгрузки страницы
 function openCustomScheme(url) {
-  // На некоторых iOS/Android браузерах вызов через iframe надежнее, чем location.href.
   const iframe = document.createElement("iframe");
   iframe.style.display = "none";
   iframe.src = url;
   document.body.appendChild(iframe);
-  // Чистим iframe, чтобы не копить в DOM
   setTimeout(() => {
     try { document.body.removeChild(iframe); } catch (_) {}
   }, 1500);
@@ -247,25 +240,16 @@ function openDeepLink(url) {
   try {
     openCustomScheme(url);
   } catch (_) {
-    // Фоллбек, если iframe запрещен
     window.location.href = url;
   }
 }
 
 let deepLink = null;
-let routingLink = null;
 let storeLink = null;
-let deepLinkAlt = null;
 
 switch(app){
   case "happ":
-    // Для Happ: сначала маршрутизация, затем подписка
-    routingLink = "happ://routing/add/" + routingConfig;
-    // Happ (как ты описал) ожидает "сырой" URL прямо после happ://add/
-    // Пример: happ://add/https://pr01.crol-dark.tech/sub/.....
     deepLink = "happ://add/" + subUrl;
-    // Запасной вариант — закодированный URL (если в ключе встретятся символы, ломающие deeplink)
-    deepLinkAlt = "happ://add/" + encodeURIComponent(subUrl);
     storeLink = /iphone|ipad/i.test(navigator.userAgent)
       ? "https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973"
       : "https://play.google.com/store/apps/details?id=com.happproxy";
@@ -325,22 +309,7 @@ switch(app){
 const addConfigBtn = document.getElementById("add-config-btn");
 addConfigBtn.addEventListener("click", function() {
   try {
-    if (app === "happ" && routingLink) {
-      // Для Happ: сначала маршрутизация, затем подписка
-      // Важно: вызываем через iframe, чтобы страница не выгружалась и JS не замораживался.
-      openDeepLink(routingLink);
-      // Делаем небольшую задержку, но не слишком большую: браузер может уйти в фон.
-      setTimeout(() => {
-        openDeepLink(deepLink);
-        // На некоторых связках (браузер/OS) "сырой" URL может быть отфильтрован —
-        // пробуем альтернативу как мягкий фоллбек.
-        if (deepLinkAlt) {
-          setTimeout(() => openDeepLink(deepLinkAlt), 250);
-        }
-      }, 150);
-    } else {
-      openDeepLink(deepLink);
-    }
+    openDeepLink(deepLink);
   } catch(e) {
     console.error("Failed to open deep link:", e);
     document.getElementById("fallback-text").style.display = "block";
@@ -364,34 +333,15 @@ if(storeLink){
 // Автопереход через небольшую задержку
 setTimeout(() => {
   try {
-    if (app === "happ" && routingLink) {
-      // Для Happ: сначала маршрутизация, затем подписка
-      openDeepLink(routingLink);
-      setTimeout(() => {
-        openDeepLink(deepLink);
-        if (deepLinkAlt) {
-          setTimeout(() => openDeepLink(deepLinkAlt), 250);
-        }
-        // Если переход не произошел через 1 секунду, показываем кнопку
-        setTimeout(() => {
-          document.getElementById("loading-container").style.display = "none";
-          document.getElementById("button-container").style.display = "block";
-          document.getElementById("status-text").textContent = "Нажмите кнопку для добавления конфигурации";
-          document.getElementById("fallback-text").style.display = "block";
-          document.getElementById("fallback-link").style.display = "inline";
-        }, 1000);
-      }, 150);
-    } else {
-      openDeepLink(deepLink);
-      // Если переход не произошел через 1 секунду, показываем кнопку
-      setTimeout(() => {
-        document.getElementById("loading-container").style.display = "none";
-        document.getElementById("button-container").style.display = "block";
-        document.getElementById("status-text").textContent = "Нажмите кнопку для добавления конфигурации";
-        document.getElementById("fallback-text").style.display = "block";
-        document.getElementById("fallback-link").style.display = "inline";
-      }, 1000);
-    }
+    openDeepLink(deepLink);
+    // Если переход не произошел через 1 секунду, показываем кнопку
+    setTimeout(() => {
+      document.getElementById("loading-container").style.display = "none";
+      document.getElementById("button-container").style.display = "block";
+      document.getElementById("status-text").textContent = "Нажмите кнопку для добавления конфигурации";
+      document.getElementById("fallback-text").style.display = "block";
+      document.getElementById("fallback-link").style.display = "inline";
+    }, 1000);
   } catch(e) {
     document.getElementById("loading-container").style.display = "none";
     document.getElementById("button-container").style.display = "block";
