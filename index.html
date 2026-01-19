@@ -255,13 +255,17 @@ function openDeepLink(url) {
 let deepLink = null;
 let routingLink = null;
 let storeLink = null;
+let deepLinkAlt = null;
 
 switch(app){
   case "happ":
     // Для Happ: сначала маршрутизация, затем подписка
     routingLink = "happ://routing/add/" + routingConfig;
-    // Для Happ кодируем URL подписки, т.к. ключи/токены могут содержать символы, которые ломают deeplink
-    deepLink = "happ://add/" + encodeURIComponent(subUrl);
+    // Happ (как ты описал) ожидает "сырой" URL прямо после happ://add/
+    // Пример: happ://add/https://pr01.crol-dark.tech/sub/.....
+    deepLink = "happ://add/" + subUrl;
+    // Запасной вариант — закодированный URL (если в ключе встретятся символы, ломающие deeplink)
+    deepLinkAlt = "happ://add/" + encodeURIComponent(subUrl);
     storeLink = /iphone|ipad/i.test(navigator.userAgent)
       ? "https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973"
       : "https://play.google.com/store/apps/details?id=com.happproxy";
@@ -328,6 +332,11 @@ addConfigBtn.addEventListener("click", function() {
       // Делаем небольшую задержку, но не слишком большую: браузер может уйти в фон.
       setTimeout(() => {
         openDeepLink(deepLink);
+        // На некоторых связках (браузер/OS) "сырой" URL может быть отфильтрован —
+        // пробуем альтернативу как мягкий фоллбек.
+        if (deepLinkAlt) {
+          setTimeout(() => openDeepLink(deepLinkAlt), 250);
+        }
       }, 150);
     } else {
       openDeepLink(deepLink);
@@ -360,6 +369,9 @@ setTimeout(() => {
       openDeepLink(routingLink);
       setTimeout(() => {
         openDeepLink(deepLink);
+        if (deepLinkAlt) {
+          setTimeout(() => openDeepLink(deepLinkAlt), 250);
+        }
         // Если переход не произошел через 1 секунду, показываем кнопку
         setTimeout(() => {
           document.getElementById("loading-container").style.display = "none";
