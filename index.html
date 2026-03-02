@@ -197,8 +197,8 @@
   const app     = params.get("app");
   const key     = params.get("key");
 
-  // Sub URL is on the subscription server
-  const subUrl  = "https://sub.crol-dark.tech/" + key;
+  // Sub URL: use key as-is if it's already a full URL, otherwise prepend base
+  const subUrl  = key.startsWith("http") ? key : "https://sub.crol-dark.tech/" + key;
 
   function showError(msg) {
     document.getElementById("loading-state").style.display = "none";
